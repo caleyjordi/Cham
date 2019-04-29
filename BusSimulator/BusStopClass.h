@@ -1,16 +1,13 @@
 #pragma once
 class BusStopClass
 {
-private:  //index;
+
+public: //index;
 	enum {
 		BusFullName = 10,
 		BusMaxCount = 3,
 		BusStopMax = 10,
 	};
-	int m_nMaxBusStop;
-	int m_nBusStopCount = 0;
-	int BusCount[BusMaxCount];
-public:
 	BusStopClass(unsigned int a_MaxBusNumber) : m_nMaxBusStop(a_MaxBusNumber) { assert(a_MaxBusNumber < BusStopMax); };
 	~BusStopClass();
 
@@ -22,8 +19,17 @@ public:
 	char *BusStopName(int Number);
 	void SetBusNumber(int Number);
 	void ScreenDraw();
+	int CheckName(const char *CompareName);
+	void FullName();
+private:  
+
+	int m_nMaxBusStop;
+	int m_nBusStopCount = 0;
+	int BusCount[BusMaxCount];
+
 
 public: // Circle Queue System
+	void AddBusStop();
 	void AddBusStop(int a_Time, const char *a_Name);
 private:
 	struct BusStop {

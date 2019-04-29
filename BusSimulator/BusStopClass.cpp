@@ -16,12 +16,25 @@ BusStopClass::~BusStopClass()
 	}
 }
 
-void BusStopClass::AddBusStop(int a_Time,const char *a_Name)
+void BusStopClass::AddBusStop()
 {
-	if (m_nBusStopCount >= m_nMaxBusStop)
-		return;
+	int Time;
+	char Name[BusFullName];
+	cout << "걸릴 시간을 입력하시오 : ";
+	cin >> Time;
+	cout << "정류장의 이름을 입력하시오 : ";
+	cin >> Name;
+	system("cls");
+	AddBusStop(Time, Name);
+}
+
+void BusStopClass::AddBusStop(int a_Time, const char *a_Name)
+{
+	//갯수를 넘어가면 리턴
+	if (m_nBusStopCount >= m_nMaxBusStop){return;}
+	//같은 이름 있을시 리턴
+	if (CheckName(a_Name) != -1) { return ; }
 	BusStop *Temp = m_nHead;
-	
 	if (Temp != nullptr) { for (; Temp->Link != m_nHead; Temp = Temp->Link); }
 	BusStop *Tmp = new BusStop;
 	strcpy_s(Tmp->Name, a_Name);
@@ -67,7 +80,8 @@ void BusStopClass::Render(int Number)
 	GotoXY(1, 3);
 	cout << BusStopName(Number) << " 정류장";
 
-	 
+	GotoXY(0, 10);
+	FullName();
 }
 
 int BusStopClass::TimeCaculator(int Number)
@@ -122,4 +136,26 @@ void BusStopClass::ScreenDraw()
 	cout << "│                        │" << endl;
 	cout << "│                        │" << endl;
 	cout << "└────────────────────────┘" << endl;
+}
+
+int BusStopClass::CheckName(const char *CompareName)
+{
+	BusStop *Temp = m_nHead;
+	for (int i = 0;i<m_nBusStopCount; i++)
+	{
+		if (strcmp(Temp->Name, CompareName) == 0){return i;}
+		Temp = m_nHead->Link;
+	}
+	return -1;
+}
+
+void BusStopClass::FullName()
+{
+	BusStop *Temp = m_nHead;
+	do
+	{
+		cout << Temp->Name << "정류장 -> ";
+		Temp = Temp->Link;
+	} while (Temp != m_nHead);
+	cout << Temp->Name << "정류장";
 }

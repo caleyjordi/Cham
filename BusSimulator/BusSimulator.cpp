@@ -4,22 +4,36 @@
 #include "Goto.h"
 int main()
 {
-	BusStopClass B1(8);
-	int a;
-	B1.AddBusStop(1,"A");
-	B1.AddBusStop(2, "B");
-	B1.AddBusStop(3, "C");
-	B1.AddBusStop(4, "D");
-	B1.AddBusStop(5, "E");
-	B1.AddBusStop(5, "F");
-	B1.AddBusStop(1, "G");
-	B1.SetBusNumber(3);
+	BusStopClass BusStop(8);
+	char a[BusStopClass::BusFullName];
 
+	/*
+	//버스 정류장 정보 입력해두기
+	BusStop.AddBusStop(1, "A");
+	BusStop.AddBusStop(2, "B");
+	BusStop.AddBusStop(3, "C");
+	BusStop.AddBusStop(4, "D");
+	BusStop.AddBusStop(5, "E");
+	BusStop.AddBusStop(5, "F");
+	BusStop.AddBusStop(1, "G");
+	BusStop.AddBusStop(1, "H");
+	BusStop.AddBusStop(1, "I");
+	BusStop.AddBusStop(1, "J");
+
+	*/
+	//버스 정류장 정보 입력받기
+	//갯수는 마음대로
+	for (int i = 0; i < 5; i++)
+	{ BusStop.AddBusStop();}
+	//버스 정류장 설정
+	BusStop.SetBusNumber(3);
 	while (1)
 	{
-		B1.Update();
+		BusStop.Update();
 		GotoXY(0, 6);
+		cout << "현재 있는 정류장의 이름을 입력해주십시오 : ";
 		cin >> a;
-		B1.Render(a);
+		BusStop.Render(BusStop.CheckName(a));
+		
 	}
 }
