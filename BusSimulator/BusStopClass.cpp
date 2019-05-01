@@ -35,24 +35,36 @@ void BusStopClass::AddBusStop(int a_Time, const char *a_Name)
 	//같은 이름 있을시 리턴
 	if (CheckName(a_Name) != -1) { return ; }
 	BusStop *Temp = m_nHead;
-	if (Temp != nullptr) { for (; Temp->Link != m_nHead; Temp = Temp->Link); }
-	BusStop *Tmp = new BusStop;
-	strcpy_s(Tmp->Name, a_Name);
-	Tmp->Time = a_Time;
-	if (Temp == nullptr) { m_nHead = Tmp; }
-	else { Temp->Link = Tmp; }
-	Tmp->Link = m_nHead;
+
+	BusStop *NewStop = new BusStop;
+	strcpy_s(NewStop->Name, a_Name);
+	NewStop->Time = a_Time;
+
+	if (Temp == nullptr) { m_nHead = NewStop; }
+	else { 
+		for (; Temp->Link != m_nHead; Temp = Temp->Link); 
+		Temp->Link = NewStop; 
+	}
+
+	NewStop->Link = m_nHead;
 	m_nBusStopCount++;
 }
 
 void BusStopClass::BusMove()
 {
+	//시계방향으로 돌도록 해놨습니다.
+	//1->8->7->6->5->4->3->2->1
+	/*예를 1 2 3
+		   8   4
+		   7 6 5
+	그래서 렌더에서도 표시 해놨습니다.
+	*/
 	BusStop *temp = m_nHead;
-	bool First = temp->BusOn;
+	bool First = temp->BusOnThisStop;
 	for (; temp->Link != m_nHead; temp = temp->Link) {
-			temp->BusOn = temp->Link->BusOn;
+			temp->BusOnThisStop = temp->Link->BusOnThisStop;
 	}
-	temp->BusOn = First;
+	temp->BusOnThisStop = First;
 }
 
 void BusStopClass::Update()
@@ -62,6 +74,8 @@ void BusStopClass::Update()
 
 void BusStopClass::Render(int Number)
 {
+	//assert를 안쓰고 끝낼려면
+	//if (Number < 0 || Number > m_nBusStopCount) { return; }
 	assert(Number >= 0 && Number <= m_nBusStopCount);
 	system("cls");
 	ScreenDraw();
@@ -89,7 +103,7 @@ int BusStopClass::TimeCaculator(int Number)
 	int sum = 0;
 	BusStop *temp = m_nHead;
 	for (int i = 0; i < Number; i++) { temp = temp->Link; }
-	for (; temp->BusOn == false; temp = temp->Link) { sum += temp->Time; }
+	for (; temp->BusOnThisStop == false; temp = temp->Link) { sum += temp->Time; }
 	return sum;
 }
 
@@ -98,7 +112,7 @@ int BusStopClass::BusCaculator(int Number)
 	int sum = 0;
 	BusStop *temp = m_nHead;
 	for (int i = 0; i < Number; i++) { temp = temp->Link; }
-	for (; temp->BusOn == false; temp = temp->Link) { sum ++; }
+	for (; temp->BusOnThisStop == false; temp = temp->Link) { sum ++; }
 	return sum;
 }
 
@@ -106,13 +120,17 @@ char *BusStopClass::BusStopName(int Number)
 {
 	BusStop *temp = m_nHead;
 	for (int i = 0; i < Number; i++) { temp = temp->Link; }
-	for (; temp->BusOn == false; temp = temp->Link);
+	for (; temp->BusOnThisStop == false; temp = temp->Link);
 	return temp->Name;
 }
 
 void BusStopClass::SetBusNumber(int Number)
 {
+	//만약에 이름 없으면 assert에 걸려서 에러나고
+	//버스카운트 숫자보다 높으면 에러납니다.
 	assert(Number >= 0 && Number <= m_nBusStopCount);
+	//assert를 안쓰고 끝낼려면
+	//if (Number < 0 || Number > m_nBusStopCount) { return; }
 	for (int i = 0; i < BusMaxCount; i++)
 	{
 		if (BusCount[BusMaxCount] <= 0 || BusCount[BusMaxCount] >= m_nBusStopCount)
@@ -126,7 +144,7 @@ void BusStopClass::SetBusNumber(int Number)
 	for (int i = 0; i < Number; i++) {
 		Temp = Temp->Link;
 	}
-	Temp->BusOn = true;
+	Temp->BusOnThisStop = true;
 }
 
 void BusStopClass::ScreenDraw()
@@ -146,6 +164,10 @@ int BusStopClass::CheckName(const char *CompareName)
 		if (strcmp(Temp->Name, CompareName) == 0){return i;}
 		Temp = m_nHead->Link;
 	}
+	//만약에 없는 이름이 없는 경우에도 오류가 안나게 할려면
+	/*
+	return 0;
+	*/
 	return -1;
 }
 

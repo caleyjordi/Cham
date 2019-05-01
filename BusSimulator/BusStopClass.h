@@ -36,7 +36,7 @@ private:
 		int Time;
 		BusStop *Link = nullptr;
 		char Name[BusFullName];
-		bool BusOn = false;
+		bool BusOnThisStop = false;
 	};
 	BusStop *m_nHead = nullptr;
 
